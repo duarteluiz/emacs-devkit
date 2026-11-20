@@ -5,7 +5,7 @@
 
 **A reproducible, terminal-first Emacs development setup for Ubuntu 24.04 LTS.**
 
-Emacs DevKit configures GNU Emacs for **C/C++, Python, Docker, Git, and modern editing**, with LSP-powered code completion, a dark theme, a file explorer, an integrated terminal, and VS Code-inspired keyboard shortcuts.
+Emacs DevKit configures GNU Emacs for **C/C++, Python, Docker, Git, and modern editing**, with LSP-powered code completion, a dark theme, a file explorer, an integrated terminal, VS Code-inspired keyboard shortcuts, a bottom terminal, and a one-command update workflow.
 
 It is designed for a second laptop, a fresh Ubuntu installation, or a repeatable developer workstation setup.
 
@@ -18,7 +18,9 @@ It is designed for a second laptop, a fresh Ubuntu installation, or a repeatable
 | Docker | docker.el, dockerfile-mode, yaml-mode | View containers; edit Dockerfile and Compose files |
 | Git | Magit | Status, staging, commits, branches and history |
 | Editing | Treemacs, Vertico, Consult, Doom themes, yasnippet | Explorer, search, snippets and a modern look |
-| Terminal | vterm / built-in shell | Shell access without leaving Emacs |
+| Terminal | vterm / built-in shell | Persistent bottom panel (F9) with shell fallback |
+| C++ build/debug | CMake / Ninja, GCC, GDB | F5 build, F6 run, F7 debug, Ctrl+F5 configure |
+| Updates | update.sh | Fast-forward Git updates, hash checks, backups, dry-run |
 | Keyboard | CUA Mode and custom mappings | Familiar copy/paste/save/search shortcuts |
 | Optional AI | gptel | AI chat with separate provider credentials |
 
@@ -45,6 +47,10 @@ The installer asks for confirmation before replacing Emacs startup files. **Run 
 ./install.sh --yes             # Skip confirmation
 ./install.sh --skip-apt        # Use existing Ubuntu packages
 ./install.sh --skip-packages   # Use existing Emacs packages
+./install.sh --dry-run         # Show local configuration changes
+./update.sh --dry-run          # Check for upstream updates safely
+./update.sh                    # Pull and install only safe changes
+./update.sh --with-apt         # Also install missing Ubuntu dependencies
 ./verify.sh                    # Read-only verification
 ./rollback.sh                  # Restore last Emacs startup-file backup
 ```
@@ -53,13 +59,14 @@ The installer asks for confirmation before replacing Emacs startup files. **Run 
 
 The installer **does not install or modify Docker Engine, Docker Compose, or containerd**, and never starts, stops, removes, or reconfigures containers. This avoids conflicts between Ubuntu's `docker.io` and the official Docker CE/`containerd.io` packages.
 
-Changed Emacs startup files are saved under `~/.local/share/emacs-ubuntu24-kit/backups/`. To undo those startup-file changes, run `./rollback.sh`. Rollback does not uninstall APT/ELPA packages.
+The installer tracks managed files by SHA-256. Repeated runs skip identical files. Updates skip locally edited files and safely add newly introduced modules; they never overwrite unknown local configuration files. Changed Emacs startup files are saved under `~/.local/share/emacs-ubuntu24-kit/backups/`. To undo those startup-file changes, run `./rollback.sh`. Rollback does not uninstall APT/ELPA packages.
 
-Optional package installation failures are reported without aborting every other plugin. The verification script reports missing capabilities. No API keys or account tokens are stored in this repository.
+If this is an existing manual Emacs setup without a DevKit manifest, run the interactive installer once to adopt the managed profile. Updates require an existing DevKit-managed installation. Optional package installation failures are reported without aborting every other plugin. The verification script reports missing capabilities. No API keys or account tokens are stored in this repository.
 
 ## Documentation
 
 - [User guide: installation, C++, Python, Docker, troubleshooting](docs/USER_GUIDE.md)
+- [C++ workflow: build, run, CMake and GDB](docs/CPP_WORKFLOW.md)
 - [Keyboard shortcuts](docs/KEYBOARD_SHORTCUTS.md)
 - [License](LICENSE)
 
@@ -71,14 +78,18 @@ emacs-devkit/
 ├── config/
 │   ├── init.el
 │   ├── development.el
+│   ├── simple-ui.el
+│   ├── cpp-workflow.el
 │   └── vscode-keys.el
 ├── docs/
 │   ├── USER_GUIDE.md
+│   ├── CPP_WORKFLOW.md
 │   └── KEYBOARD_SHORTCUTS.md
 ├── scripts/
 │   ├── install-packages.el
 │   └── install-optional-ai.el
 ├── install.sh
+├── update.sh
 ├── verify.sh
 ├── rollback.sh
 ├── LICENSE
