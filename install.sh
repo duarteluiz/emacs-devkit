@@ -77,7 +77,11 @@ for name in "${names[@]}"; do
   fi
   if [[ $UPDATE -eq 1 ]]; then
     if [[ -z "${previous[$rel]:-}" ]]; then
-      protected+=("$rel (not previously managed)")
+      if [[ -e "$dest" || -L "$dest" ]]; then
+        protected+=("$rel (existing unmanaged file)")
+        continue
+      fi
+      changes+=("$name")
       continue
     fi
     if [[ ! -f "$dest" ]] || [[ "$(hash "$dest")" != "${previous[$rel]}" ]]; then
