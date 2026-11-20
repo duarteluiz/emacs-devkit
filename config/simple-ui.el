@@ -1,0 +1,21 @@
+;;; simple-ui.el --- Simple modern editing layout -*- lexical-binding: t; -*-
+(when (fboundp 'global-tab-line-mode) (global-tab-line-mode 1))
+(require 'recentf)
+(setq recentf-max-saved-items 100)
+(recentf-mode 1)
+(winner-mode 1)
+(windmove-default-keybindings 'shift)
+(setq completion-ignore-case t read-file-name-completion-ignore-case t)
+(setq use-short-answers t)
+(defun kit/simple-ui-open-explorer ()
+  "Open Treemacs automatically in graphical Emacs."
+  (when (and (display-graphic-p) (require 'treemacs nil t))
+    (condition-case err
+        (treemacs)
+      (error (message "Treemacs unavailable: %s" (error-message-string err))))))
+(add-hook 'emacs-startup-hook #'kit/simple-ui-open-explorer)
+(global-set-key (kbd "C-c o") #'recentf-open-files)
+(global-set-key (kbd "C-<tab>") #'tab-line-switch-to-next-tab)
+(global-set-key (kbd "C-S-<tab>") #'tab-line-switch-to-prev-tab)
+(global-set-key (kbd "C-c u") #'winner-undo)
+(provide 'simple-ui)

@@ -5,17 +5,23 @@ on:
   pull_request:
 
 jobs:
-  syntax:
+  syntax-and-smoke:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Validate shell scripts
-        run: bash -n install.sh verify.sh rollback.sh
-      - name: Validate Emacs Lisp syntax
+      - name: Install test dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y emacs-nox
+          sudo apt-get install -y emacs-nox shellcheck
+      - name: Check shell syntax and style
+        run: |
+          bash -n install.sh update.sh verify.sh rollback.sh tests/smoke.sh
+          shellcheck --severity=error install.sh update.sh verify.sh rollback.sh tests/smoke.sh
+      - name: Check Emacs Lisp syntax
+        run: |
           for file in config/*.el scripts/*.el; do
             emacs --batch -Q --eval "(with-temp-buffer (insert-file-contents \"$file\") (check-parens))"
           done
+      - name: Integration smoke test
+        run: bash tests/smoke.sh

@@ -18,7 +18,7 @@ cd emacs-devkit
 emacs
 ```
 
-**Run the installer as your normal user. Do not use `sudo ./install.sh`.** The script asks before changing Emacs startup files. For noninteractive environments: `./install.sh --yes`. To skip host-package installation: `./install.sh --skip-apt`. To skip ELPA packages: `./install.sh --skip-packages`.
+**Run the installer as your normal user. Do not use `sudo ./install.sh`.** The script asks before changing Emacs startup files. For noninteractive environments: `./install.sh --yes`. To skip host-package installation: `./install.sh --skip-apt`. To skip ELPA packages: `./install.sh --skip-packages`. The installer records SHA-256 checksums for its managed startup files, safely skips already-current files, and backs up files before changing them.
 
 The installer backs up the startup files it replaces, installs missing editor dependencies and extensions, and runs a read-only verification. It never installs or modifies Docker Engine, Compose, containerd, or your running containers.
 
@@ -29,7 +29,11 @@ The installer backs up the startup files it replaces, installs missing editor de
 - `Ctrl+P`: find a project file.
 - `Ctrl+Shift+P`: Emacs command prompt.
 - `F8`: Treemacs file explorer.
-- `F9`: vterm terminal.
+- `F9`: a persistent bottom terminal (vterm, with shell fallback).
+- `Ctrl+F5`: configure a CMake project in Debug mode.
+- `F5`: build the current C++ program or CMake project.
+- `F6`: select and run the compiled executable.
+- `F7`: select and debug the executable with GDB.
 - `F10`: Docker management UI.
 - `M-x magit-status`: Git management.
 
@@ -73,7 +77,7 @@ ln -sfn build/compile_commands.json compile_commands.json
 emacs main.cpp
 ```
 
-Eglot connects to clangd when opening C/C++ files. Corfu shows completion suggestions. The generated `compile_commands.json` tells clangd the real build flags. `F12` navigates to a definition, `F2` requests a rename, `Ctrl+C` then `F` formats C++ with clang-format, and `F5` prompts for a compile command. To debug with GDB, use `M-x gdb` and run `gdb -i=mi build/sensor_demo`.
+Eglot connects to clangd when opening C/C++ files. Corfu shows completion suggestions. The generated `compile_commands.json` tells clangd the real build flags. `F12` navigates to a definition, `F2` requests a rename, `Ctrl+C` then `F` formats C++ with clang-format, and `F5` builds the CMake project. Use `Ctrl+F5` to configure, `F6` to run, and `F7` to debug with GDB. See [C++ Workflow](CPP_WORKFLOW.md) for details.
 
 ## 5. Python sample
 
@@ -138,13 +142,18 @@ This installs `gptel` but does not configure an AI provider, API key, billing or
 
 This asks for confirmation and restores the most recent backup of the Emacs startup files replaced by the installer. It does not uninstall system packages, Emacs plugins, or touch project files and Docker data.
 
-## 11. Validation and updates
+## 11. Validation and safe updates
 
 ```bash
 ./verify.sh
-git pull --ff-only
-./install.sh
+./update.sh --dry-run    # Check upstream and inspect local managed-file changes
+./update.sh              # Fast-forward main and install safe changes
+./update.sh --with-apt   # Also install missing host dependencies
 ```
+
+The updater requires the official repository as its Git remote, a clean working tree, a nondiverged main branch and an existing Emacs DevKit managed-file manifest. It does not reset or force-pull Git history. It skips modified managed files and does not overwrite unmanaged local files. Identical files are not reinstalled. The first installation is done through `./install.sh`; on an older manually configured Emacs workstation, run the installer interactively once and examine its backup before updating.
+
+`./install.sh --dry-run` previews configuration changes without installing packages. When updating, the script records a backup of changed startup files and records their SHA-256 checksums. `./rollback.sh` restores files only when they still match the deployed version, protecting modifications made later.
 
 Each installation creates a new backup. Batch validation checks configuration loading but **does not prove GUI shortcuts, interactive LSP, vterm behavior, or Docker permissions work**. Verify those after opening Emacs.
 
