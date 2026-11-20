@@ -58,7 +58,7 @@
 (global-set-key (kbd "M-,") #'xref-go-back)
 (global-set-key (kbd "C-c r") #'eglot-rename)
 (global-set-key (kbd "C-c a") #'eglot-code-actions)
-(global-set-key (kbd "<f5>") #'compile)
+;; F5 is provided by cpp-workflow.el.
 (defun kit/format-cpp-buffer ()
   "Format the current C/C++ buffer using clang-format."
   (interactive)
@@ -84,4 +84,6 @@
 (global-set-key (kbd "C-c f") #'kit/format-cpp-buffer)
 (load (expand-file-name "development.el" user-emacs-directory) t 'nomessage)
 (load (expand-file-name "vscode-keys.el" user-emacs-directory) t 'nomessage)
+(load (expand-file-name "simple-ui.el" user-emacs-directory) t 'nomessage)
+(load (expand-file-name "cpp-workflow.el" user-emacs-directory) t 'nomessage)
 (message "Emacs DevKit loaded.")
