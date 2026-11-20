@@ -1,0 +1,26 @@
+# Emacs transient state
+*~
+\#*\#
+.#*
+*.elc
+*.eln
+.elpa/
+elpa/
+auto-save-list/
+backups/
+auto-saves/
+recentf
+projectile-bookmarks.eld
+tramp
+.emacs.desktop
+# Local secrets and IDE artifacts
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.idea/
+.vscode/
+__pycache__/
+.venv/
+build/
