@@ -21,10 +21,13 @@ The profile uses CUA Mode and custom global bindings to approximate common VS Co
 | Rename code symbol | F2 | Requires active Eglot server |
 | Go back | Alt+Left | xref history |
 | Open project explorer | F8 | Treemacs |
-| Open integrated terminal | F9 | vterm |
+| Open integrated terminal | F9 | Bottom-side vterm, with shell fallback |
 | Docker management | F10 | docker.el |
 | Open Git status | Alt+X, then `magit-status` | Magit |
-| Compile | F5 | **Not** the debugger shortcut |
+| Configure CMake (Debug) | Ctrl+F5 | Looks for CMakeLists.txt |
+| Build C++ / CMake | F5 | GCC for a single source or CMake for a project |
+| Run executable | F6 | Choose the compiled program |
+| Debug with GDB | F7 | Choose the compiled program |
 | Format C/C++ | Ctrl+C then F | `clang-format` |
 | Quit/cancel Emacs command | Ctrl+G | Preserved intentionally |
 | Emacs help | Ctrl+H | Preserved intentionally |
@@ -36,3 +39,5 @@ The profile uses CUA Mode and custom global bindings to approximate common VS Co
 - Ubuntu desktop shortcuts and terminal emulators may intercept some combinations.
 - Emacs editing modes and the vterm buffer may override global key mappings.
 - Use `M-x describe-key` followed by the key combination to inspect what currently runs.
+
+See [the complete C++ workflow](CPP_WORKFLOW.md) for build configuration, debugging and terminal examples.
